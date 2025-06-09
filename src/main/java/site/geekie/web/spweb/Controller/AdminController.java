@@ -19,17 +19,17 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/admin") // Group admin related endpoints
+@RequestMapping("/admin")
 public class AdminController {
     @Autowired
     private AdminService adminService;
 
-    @GetMapping("/students/all") // Changed from /getAllStudents to be under /admin
+    @GetMapping("/students/all")
     public List<Students> getAllStudents() {
         return adminService.getAllStudents();
     }
 
-    @GetMapping("/all") // Changed from /getAdmins to be under /admin
+    @GetMapping("/all")
     public List<Admin> getAllAdmins() {
         return adminService.getAllAdmins();
     }

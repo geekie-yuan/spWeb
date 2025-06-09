@@ -32,9 +32,6 @@ public class AdminService {
     }
 
     // 新增学生信息
-    // Note: This basic version doesn't create a corresponding user in 'users' table.
-    // That would require a password, which is not part of the Students entity.
-    // For a complete solution, you might need a DTO or a separate process for user account creation.
     @Transactional
     public boolean addStudent(Students student) {
         // Basic validation: student_id and student_name should not be null or empty
@@ -42,11 +39,11 @@ public class AdminService {
             student.getStudent_name() == null || student.getStudent_name().trim().isEmpty()) {
             return false; 
         }
-        // Optional: Check if student_id already exists to prevent duplicates if not handled by DB constraint
-        // Students existingStudent = adminMapper.selectStudentByStudentId(student.getStudent_id());
-        // if (existingStudent != null) {
-        //     return false; // Or throw a custom exception
-        // }
+        // 检查学生id是否已存在
+         Students existingStudent = adminMapper.selectStudentByStudentId(student.getStudent_id());
+         if (existingStudent != null) {
+             return false; // Or throw a custom exception
+         }
         return adminMapper.insertStudent(student) > 0;
     }
 
@@ -57,12 +54,20 @@ public class AdminService {
 
     // 修改学生信息
     @Transactional
-    public boolean updateStudent(Students student) {
-         // Basic validation: student_id should not be null or empty
+    public boolean updateStudent(Students student, String originalStudentId) {
         if (student.getStudent_id() == null || student.getStudent_id().trim().isEmpty()) {
             return false;
         }
-        return adminMapper.updateStudent(student) > 0;
+
+        // 如果修改了student_id，需要检查新的student_id是否已存在
+        if (!student.getStudent_id().equals(originalStudentId)) {
+            Students existingStudent = adminMapper.selectStudentByStudentId(student.getStudent_id());
+            if (existingStudent != null) {
+                return false; // 新的student_id已存在，不允许修改
+            }
+        }
+
+        return adminMapper.updateStudent(student, originalStudentId) > 0;
     }
 
     // 删除学生信息 (同时删除users表中的对应用户)

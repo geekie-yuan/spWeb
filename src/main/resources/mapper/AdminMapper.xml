@@ -24,20 +24,21 @@
 
     <!-- 根据学号查询学生信息 -->
     <select id="selectStudentByStudentId" resultType="site.geekie.web.spweb.entity.Students">
-        SELECT id, student_id, student_name, gender, class_name 
-        FROM students 
+        SELECT id, student_id, student_name, gender, class_name
+        FROM students
         WHERE student_id = #{studentId}
     </select>
 
     <!-- 修改学生信息 -->
-    <!-- Admin can update student_name, gender, class_name. student_id is the key and id is auto-increment. -->
-    <update id="updateStudent" parameterType="site.geekie.web.spweb.entity.Students">
+    <!-- Admin can update student_id now. Using originalStudentId to locate the record -->
+    <update id="updateStudent">
         UPDATE students
-        SET 
-            student_name = #{student_name},
-            gender = #{gender},
-            class_name = #{class_name}
-        WHERE student_id = #{student_id}
+        SET
+            student_id = #{student.student_id},
+            student_name = #{student.student_name},
+            gender = #{student.gender},
+            class_name = #{student.class_name}
+        WHERE student_id = #{originalStudentId}
     </update>
 
     <!-- 根据学号删除学生信息 -->

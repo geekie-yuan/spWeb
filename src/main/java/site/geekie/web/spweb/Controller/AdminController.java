@@ -99,19 +99,21 @@ public class AdminController {
     @PutMapping("/students/{student_id}")
     public ResponseEntity<Object> updateStudent(@PathVariable("student_id") String studentId, @RequestBody Students studentDetails) {
         try {
-            // Ensure the studentId from path is used, not from body if they differ for identification
-            studentDetails.setStudent_id(studentId); // Or handle this logic in service
-            boolean success = adminService.updateStudent(studentDetails);
+            // 保留原始studentId，用于定位要修改的学生记录
+            String originalStudentId = studentId;
+
+            // 使用请求体中的student_id，允许修改student_id
+            boolean success = adminService.updateStudent(studentDetails, originalStudentId);
             if (success) {
                 return ResponseEntity.ok(Map.of(
                     "success", true,
                     "message", "学生信息更新成功",
-                    "student_id", studentId
+                    "student_id", studentDetails.getStudent_id() // 返回可能被修改后的student_id
                 ));
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
                     "success", false,
-                    "message", "学生信息更新失败，未找到学号为 " + studentId + " 的学生或更新无效"
+                    "message", "学生信息更新失败，未找到学号为 " + originalStudentId + " 的学生，或新学号已存在"
                 ));
             }
         } catch (Exception e) {

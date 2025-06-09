@@ -2,7 +2,14 @@
 
 ## 项目简介
 
-本项目为基于 Spring Boot + MyBatis 的学生管理系统后端，支持学生信息、管理员信息的查询与管理员登录验证。数据存储于 MySQL 数据库，接口采用 RESTful 风格，适合前后端分离开发。
+本项目为基于 Spring Boot + MyBatis 的学生管理系统后端，支持学生信息管理、学生用户登录验证以及管理员登录验证。数据存储于 MySQL 数据库，接口采用 RESTful 风格，适合前后端分离开发。
+
+项目特点：
+- 采用Spring Boot框架，易于开发和部署
+- 使用MyBatis作为ORM框架，灵活操作数据库
+- RESTful API设计，便于前端调用
+- 支持跨域请求处理
+- 提供完整的学生信息CRUD操作
 
 ---
 
@@ -76,142 +83,123 @@
   ```json
   {
     "student_id": "学号",
-    "student_name": "姓名",
-    "gender": "性别",
-    "class_name": "班级"
-  }
-  ```
-- **成功响应** (201 Created)：
-  ```json
-  {
-    "success": true,
-    "message": "学生信息添加成功",
-    "student_id": "学号"
-  }
-  ```
-- **失败响应** (400 Bad Request / 500 Internal Server Error)：
-  ```json
-  {
-    "success": false,
-    "message": "错误信息"
-  }
-  ```
-  *注意：新增学生时，默认不会在 `users` 表中创建对应的登录账号。如需此功能，需要额外实现。*
+    "student_name": "姓名
 
-#### e. 查询指定学号的学生 (管理员权限)
+# 部署指南
 
-- **接口**：`GET /admin/students/{student_id}` (例如: `/admin/students/S001`)
-- **成功响应** (200 OK)：返回学生信息的 JSON 对象
-  ```json
-  {
-    "id": "1", 
-    "student_id": "S001",
-    "student_name": "张三",
-    "gender": "男",
-    "class_name": "计算机一班"
-  }
-  ```
-- **失败响应** (404 Not Found)：
-  ```json
-  {
-    "success": false,
-    "message": "未找到学号为 S001 的学生"
-  }
-  ```
+## 方法一：直接部署JAR包
 
-#### f. 修改指定学号的学生信息 (管理员权限)
+1. **准备服务器环境**：
 
-- **接口**：`PUT /admin/students/{student_id}` (例如: `/admin/students/S001`)
-- **请求体**（JSON），包含要更新的字段：
-  ```json
-  {
-    "student_name": "张三丰",
-    "gender": "男",
-    "class_name": "武当一班"
-  }
-  ```
-  *注意：`student_id` 在路径中指定，请求体中的 `student_id` 会被路径参数覆盖或应与路径参数一致。`id` 字段通常不由客户端指定。*
-- **成功响应** (200 OK)：
-  ```json
-  {
-    "success": true,
-    "message": "学生信息更新成功",
-    "student_id": "S001"
-  }
-  ```
-- **失败响应** (404 Not Found / 400 Bad Request / 500 Internal Server Error)：
-  ```json
-  {
-    "success": false,
-    "message": "错误信息"
-  }
-  ```
+   * 在服务器上安装JDK 17或更高版本：
 
-#### g. 删除指定学号的学生 (管理员权限)
+     ```bash
+     # Ubuntu/Debian
+     sudo apt update && sudo apt install -y default-jdk
+     
+     ```
 
-- **接口**：`DELETE /admin/students/{student_id}` (例如: `/admin/students/S001`)
-- **成功响应** (200 OK)：
-  ```json
-  {
-    "success": true,
-    "message": "学生信息删除成功",
-    "student_id": "S001"
-  }
-  ```
-- **失败响应** (404 Not Found / 500 Internal Server Error)：
-  ```json
-  {
-    "success": false,
-    "message": "错误信息"
-  }
-  ```
-  *注意：此操作会同时删除 `users` 表中对应的用户记录（如果存在）。*
+   * 安装MySQL数据库：
 
-### 2. 用户（学生）相关接口 (`/user`)
+     ```bash
+     # Ubuntu/Debian
+     sudo apt install mysql-server
+     
+     ```
 
-#### a. 学生（用户）登录验证
+2. **配置数据库**：
 
-- **接口**：`POST /user/login`
-- **请求体**（JSON）：
-  ```json
-  {
-    "student_id": "学号",
-    "password": "密码"
-  }
-  ```
-- **成功响应** (200 OK)：
-  ```json
-  {
-    "success": true,
-    "message": "登录成功",
-    "studentId": "学号"
-  }
-  ```
-- **失败响应** (401 Unauthorized)：
-  ```json
-  {
-    "success": false,
-    "message": "用户名或密码错误"
-  }
-  ```
+   * 登录MySQL并创建数据库：
 
----
+     ```bash
+     mysql -u root -p
+     CREATE DATABASE student_info;
+     USE student_info;
+     ```
 
-## 使用方法
+   * 创建必要的表结构：
 
-1.  **环境准备**：
-    *   安装 Java Development Kit (JDK) 8 或更高版本。
-    *   安装 Maven 构建工具。
-    *   安装 MySQL 数据库。
-2.  **数据库配置**：
-    *   创建名为 `student_info` (或您在 `application.yml` 中配置的名称) 的数据库。
-    *   执行数据库脚本创建 `students`, `admins`, `users` 表（参考上面的数据库结构）。
-    *   插入必要的测试数据。
-3.  **项目配置**：
-    *   修改 `src/main/resources/application.yml` 文件，配置正确的数据库连接信息 (URL, username, password)。
-4.  **构建与运行**：
-    *   在项目根目录下执行 `mvn clean package` 进行构建。
-    *   运行生成的 JAR 文件：`java -jar target/spweb-0.0.1-SNAPSHOT.jar` (文件名可能不同)。
-5.  **接口测试**：
-    *   项目启动后，默认运行在 `http://localhost:8081`。
-    *   使用 Postman、curl 或其他 API 测试工具调用上述接口。
+     ```sql
+     CREATE TABLE students (
+       id INT AUTO_INCREMENT PRIMARY KEY,
+       student_id CHAR(20) NOT NULL UNIQUE,
+       student_name CHAR(20) NOT NULL,
+       gender CHAR(5),
+       class_name CHAR(20)
+     );
+     
+     CREATE TABLE admins (
+       admin_id CHAR(20) NOT NULL PRIMARY KEY,
+       password CHAR(20) NOT NULL
+     );
+     
+     CREATE TABLE users (
+       student_id CHAR(20) NOT NULL PRIMARY KEY,
+       password CHAR(20) NOT NULL
+     );
+     ```
+
+   * 插入初始管理员账号：
+
+     ```sql
+     INSERT INTO admins (admin_id, password) VALUES ('admin001', 'admin123');
+     ```
+
+   * 开启数据库远程访问
+
+     ~~~sql
+     sudo mysql -u root -p	//登录数据库
+     CREATE USER 'root'@'%' IDENTIFIED BY 'yourpassword';
+     GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
+     FLUSH PRIVILEGES;		//添加远程用户 记得替换 yourpassword
+     
+     
+     ~~~
+
+     
+
+3. **上传并配置项目**：
+
+   * 使用SCP或SFTP将生成的JAR文件上传到服务器：
+
+     ```bash
+     scp target/spWeb-0.0.1-SNAPSHOT.jar username@server_ip:/path/to/deploy/
+     ```
+
+   * 创建application.yml配置文件（与JAR同目录），修改数据库连接配置：
+
+     ```yaml
+     server:
+       port: 8081
+     spring:
+       datasource:
+         driver-class-name: com.mysql.cj.jdbc.Driver
+         url: jdbc:mysql://databaseip:3306/student_info?user=root	//databaseIp替换数据库Ip
+         username: databaseName	//databaseName替换数据库名字
+         password: databasePassword	//databasePassword替换数据库密码
+       mvc:
+         cors:
+           allowed-origins: "*"
+           allowed-methods: "*"
+           allowed-headers: "*"
+           allow-credentials: true
+           max-age: 18000
+     
+     mybatis:
+       mapper-locations: classpath:mapper/*.xml
+       # type-aliases-package: com.example.demo.model
+     ```
+
+4. **启动应用**：
+
+   * 直接运行JAR文件：
+
+     ```bash
+     java -jar spWeb-0.0.1-SNAPSHOT.jar
+     ```
+
+   * 或使用nohup在后台运行：
+
+     ```bash
+     nohup java -jar spWeb-0.0.1-SNAPSHOT.jar > app.log 2>&1 &
+     ```

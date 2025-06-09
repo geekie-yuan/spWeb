@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import site.geekie.web.spweb.entity.User;
 import site.geekie.web.spweb.service.UserService;
@@ -12,6 +13,7 @@ import site.geekie.web.spweb.service.UserService;
 import java.util.Map;
 
 @RestController
+//@RequestMapping("/api")
 public class UserController {
 
     @Autowired

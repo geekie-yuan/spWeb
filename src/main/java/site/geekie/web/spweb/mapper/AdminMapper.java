@@ -22,7 +22,7 @@ public interface AdminMapper {
     Students selectStudentByStudentId(@Param("studentId") String studentId);
 
     // 修改学生信息
-    int updateStudent(Students student);
+    int updateStudent(@Param("student") Students student, @Param("originalStudentId") String originalStudentId);
 
     // 根据学号删除学生信息
     int deleteStudent(@Param("studentId") String studentId);

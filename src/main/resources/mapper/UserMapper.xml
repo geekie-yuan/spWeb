@@ -6,4 +6,9 @@
     <select id="verifyUser" resultType="site.geekie.web.spweb.entity.User">
         SELECT * FROM users WHERE student_id = #{studentId} AND password = #{password}
     </select>
+
+    <!-- 根据学生ID删除用户 -->
+    <delete id="deleteUserByStudentId">
+        DELETE FROM users WHERE student_id = #{studentId}
+    </delete>
 </mapper>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="site.geekie.web.spweb.mapper.AdminMapper">
+    <!-- 查询学生信息 -->
+    <select id="getAllStudents" resultType="site.geekie.web.spweb.entity.Students">
+        SELECT id, student_id, student_name, gender, class_name FROM students
+    </select>
+    <!-- 查询所有管理员 -->
+    <select id="getAllAdmins" resultType="site.geekie.web.spweb.entity.Admin">
+        SELECT admin_id, password FROM admins
+    </select>
+    <!-- 验证管理员登录 -->
+    <select id="verifyAdmin" resultType="site.geekie.web.spweb.entity.Admin">
+        SELECT admin_id, password FROM admins WHERE admin_id = #{adminId} AND password = #{password}
+    </select>
+
+    <!-- 新增学生信息 -->
+    <!-- The 'id' column is auto-increment, so it's not included in the insert statement's columns -->
+    <insert id="insertStudent" parameterType="site.geekie.web.spweb.entity.Students">
+        INSERT INTO students (student_id, student_name, gender, class_name)
+        VALUES (#{student_id}, #{student_name}, #{gender}, #{class_name})
+    </insert>
+
+    <!-- 根据学号查询学生信息 -->
+    <select id="selectStudentByStudentId" resultType="site.geekie.web.spweb.entity.Students">
+        SELECT id, student_id, student_name, gender, class_name 
+        FROM students 
+        WHERE student_id = #{studentId}
+    </select>
+
+    <!-- 修改学生信息 -->
+    <!-- Admin can update student_name, gender, class_name. student_id is the key and id is auto-increment. -->
+    <update id="updateStudent" parameterType="site.geekie.web.spweb.entity.Students">
+        UPDATE students
+        SET 
+            student_name = #{student_name},
+            gender = #{gender},
+            class_name = #{class_name}
+        WHERE student_id = #{student_id}
+    </update>
+
+    <!-- 根据学号删除学生信息 -->
+    <delete id="deleteStudent">
+        DELETE FROM students WHERE student_id = #{studentId}
+    </delete>
+</mapper>
